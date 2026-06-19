@@ -8,7 +8,7 @@ ADAPTER_REPO  = "Ahmed-Samir-Abdel-fattah/toolforge-qwen2.5-1.5b-lora"
 
 # Load once at startup
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
-base = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID, torch_dtype=torch.float16, device_map="auto")
+base = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID, torch_dtype=torch.float32)
 model = PeftModel.from_pretrained(base, ADAPTER_REPO)
 model.eval()
 
@@ -22,8 +22,9 @@ def predict(user_message, tools_json):
     messages = [{"role": "system", "content": system},
                 {"role": "user",   "content": user_message}]
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-
+    device = next(model.parameters()).device
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    
     with torch.no_grad():
         output = model.generate(**inputs, max_new_tokens=256, do_sample=False,
                                 pad_token_id=tokenizer.pad_token_id)
@@ -53,5 +54,6 @@ gr.Interface(
     examples=[
         ["What is the weather in Cairo?", EXAMPLE_TOOLS],
         ["What's the temperature in Paris right now?", EXAMPLE_TOOLS],
-    ]
+    ],
+    cache_examples=False
 ).launch()
