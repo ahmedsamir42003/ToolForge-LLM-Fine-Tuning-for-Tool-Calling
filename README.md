@@ -206,8 +206,8 @@ ToolForge/
 ├── 🗂️ results/
 │   ├── base_predictions.csv       # Row-level scores — base model
 │   ├── finetuned_predictions.csv  # Row-level scores — ToolForge
-│   └── comparison_table.csv       # Aggregated summary table
-├── 🚀 app.py                      # Gradio demo
+├── 🤗 src/
+|    ├──  🚀 app.py                 # Gradio demo
 └── 📋 requirements.txt
 ```
 
