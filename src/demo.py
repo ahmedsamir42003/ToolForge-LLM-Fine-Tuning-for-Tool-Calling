@@ -20,12 +20,12 @@ def predict(user_message, tools_json):
 
     system = (
         "You are a function calling AI model. You are provided with function signatures "
-        "within <tools> </tools> XML tags.\n"
+        "within <tools> </tools> XML tags you need to know them and never never create one from your self just use the provided next provided tools if need.\n"
         "<tools>\n"
         f"{json.dumps(tools)}\n"
         "</tools>\n\n"
         "Follow these rules strictly:\n"
-        "1. If the user message requires a tool, output ONLY <tool_call> tags, no explanation:\n"
+        "1. If the user message requires a tool and you have it , output ONLY <tool_call> tags, no explanation:\n"
         "<tool_call>\n"
         '{\"name\": \"function_name\", \"arguments\": {\"arg1\": \"value1\"}}\n'
         "</tool_call>\n"
