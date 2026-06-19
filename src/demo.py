@@ -18,7 +18,23 @@ def predict(user_message, tools_json):
     except Exception:
         return "❌ Invalid tools JSON"
 
-    system = f"You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags.\n<tools>\n{json.dumps(tools)}\n</tools>"
+    system = (
+        "You are a function calling AI model. You are provided with function signatures "
+        "within <tools> </tools> XML tags.\n"
+        "<tools>\n"
+        f"{json.dumps(tools)}\n"
+        "</tools>\n\n"
+        "Follow these rules strictly:\n"
+        "1. If the user message requires a tool, output ONLY <tool_call> tags, no explanation:\n"
+        "<tool_call>\n"
+        '{\"name\": \"function_name\", \"arguments\": {\"arg1\": \"value1\"}}\n'
+        "</tool_call>\n"
+        "2. If the user message is a greeting, general question, or can be answered without "
+        "any tool (e.g. 'hello', 'what is 2+2', 'what is the capital of France'), "
+        "reply in plain text. Do NOT use <tool_call> tags.\n"
+        "3. Never fabricate tool results or simulate what a tool would return."
+    )
+    
     messages = [{"role": "system", "content": system},
                 {"role": "user",   "content": user_message}]
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
